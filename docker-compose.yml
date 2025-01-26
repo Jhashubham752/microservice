@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./user-crud-app
+      args:
+        NODE_ENV: development  # Example build argument
+        API_URL: http://localhost:5000/api/users  # API URL for frontend to connect
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000/api/users  # Frontend API URL
+
+  backend:
+    build:
+      context: ./backend
+      args:
+        NODE_ENV: production  # Example build argument
+        MONGO_URI: mongodb://mongo:27017/user-crud  # MongoDB URI for backend
+        PORT: 5000  # Port for the backend service
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/user-crud  # MongoDB URI for the backend
+      - PORT=5000  # Port for the backend service
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
